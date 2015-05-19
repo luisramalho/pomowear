@@ -18,6 +18,13 @@ package luisramalho.com.pomowear;
 
 import android.os.CountDownTimer;
 
+/**
+ * The basics of the pomodoro technique are:
+ *
+ * 1. Work for 25 minutes
+ * 2. Take a short break (5 minutes)
+ * 3. Every 4 pomodori take a longer break (15 minutes)
+ */
 public class PomodoroTimer {
     /**
      * Pomodoro working time, 25 minutes.
@@ -25,9 +32,14 @@ public class PomodoroTimer {
     public static final long WORKING_TIME_MILLIS = 25*60*1000;
 
     /**
-     * Pomodoro resting time, 5 minutes.
+     * Pomodoro short break, 5 minutes.
      */
-    public static final long RESTING_TIME_MILLIS = 5*60*1000;
+    public static final long SHORT_BREAK_TIME_MILLIS = 5*60*1000;
+
+    /**
+     * Pomodoro long break, 15 minutes.
+     */
+    public static final long LONG_BREAK_TIME_MILLIS = 15*60*1000;
 
     /**
      * Callback so that activity knows what's going on.
@@ -40,6 +52,11 @@ public class PomodoroTimer {
     private Boolean mIsWorkingStatus;
 
     /**
+     * Number of pomodori
+     */
+    private int mNumberOfPomodori;
+
+    /**
      * Constructor, instantiates the pomodoro callback, the working status boolean
      * and starts the working timer.
      *
@@ -48,25 +65,36 @@ public class PomodoroTimer {
     public PomodoroTimer(PomodoroCallback pomodoroCallback) {
         mPomodoroCallback = pomodoroCallback;
         mIsWorkingStatus = true;
+        mNumberOfPomodori = 0;
         workingTimer().start();
     }
 
     /**
-     * Starts the timer for the working pomodoro.
+     * Starts the timer for working.
      *
      * @return timer with 25 minutes.
      */
     public CountDownTimer workingTimer() {
+        mNumberOfPomodori++;
         return startTimer(WORKING_TIME_MILLIS);
     }
 
     /**
-     * Starts the timer for the resting pomodoro.
+     * Starts the timer for the short break.
      *
      * @return timer with 5 minutes.
      */
-    public CountDownTimer restingTimer() {
-        return startTimer(RESTING_TIME_MILLIS);
+    public CountDownTimer shortBreakTimer() {
+        return startTimer(SHORT_BREAK_TIME_MILLIS);
+    }
+
+    /**
+     * Starts the timer for the longer break.
+     *
+     * @return timer with 15 minutes.
+     */
+    public CountDownTimer longBreakTimer() {
+        return startTimer(LONG_BREAK_TIME_MILLIS);
     }
 
     /**
@@ -88,7 +116,12 @@ public class PomodoroTimer {
             @Override
             public void onFinish() {
                 if (mIsWorkingStatus) {
-                    restingTimer().start();
+                    if (mNumberOfPomodori == 4) {
+                        longBreakTimer().start();
+                        mNumberOfPomodori = 0; // reset
+                    } else {
+                        shortBreakTimer().start();
+                    }
                     mPomodoroCallback.restingTimeStarted();
                 } else {
                     workingTimer().start();

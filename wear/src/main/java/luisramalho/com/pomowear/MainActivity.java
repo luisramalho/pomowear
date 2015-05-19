@@ -1,6 +1,7 @@
 package luisramalho.com.pomowear;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.wearable.view.WatchViewStub;
@@ -25,6 +26,8 @@ public class MainActivity extends Activity {
 
         mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
+        final Resources res = getResources();
+
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
@@ -39,7 +42,7 @@ public class MainActivity extends Activity {
                         mStartButton.setVisibility(View.GONE);
                         mTimer.setVisibility(View.VISIBLE);
                         mTimerStatus.setVisibility(View.VISIBLE);
-                        mTimer.setTextColor(getResources().getColor(android.R.color.darker_gray));
+                        mTimer.setTextColor(res.getColor(android.R.color.darker_gray));
                         mPomodoroTimer = new PomodoroTimer(new PomodoroCallback() {
                             @Override
                             public void onTick(String timeLeft) {
@@ -49,15 +52,15 @@ public class MainActivity extends Activity {
                             @Override
                             public void workingTimeStarted() {
                                 mVibrator.vibrate(500);
-                                mTimer.setTextColor(getResources().getColor(android.R.color.white));
-                                mTimerStatus.setText(getResources().getString(R.string.status_working));
+                                mTimer.setTextColor(res.getColor(android.R.color.white));
+                                mTimerStatus.setText(res.getString(R.string.status_working));
                             }
 
                             @Override
                             public void restingTimeStarted() {
                                 mVibrator.vibrate(500);
-                                mTimer.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
-                                mTimerStatus.setText(getResources().getString(R.string.status_resting));
+                                mTimer.setTextColor(res.getColor(android.R.color.holo_green_dark));
+                                mTimerStatus.setText(res.getString(R.string.status_resting));
                             }
                         });
                     }
