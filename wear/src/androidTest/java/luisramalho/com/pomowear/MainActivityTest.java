@@ -19,6 +19,13 @@ package luisramalho.com.pomowear;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     private MainActivity mMainActivity;
@@ -36,6 +43,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         mStartButton = (Button) mMainActivity.findViewById(R.id.start_button);
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+    }
+
     public void testPreconditions() {
         assertNotNull("mMainActivity is null", mMainActivity);
         assertNotNull("mStartButton is null", mStartButton);
@@ -46,4 +58,15 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         final String actual = mStartButton.getText().toString();
         assertEquals(expected, actual);
     }
+
+    public void testButtonClickStartsPomodoro() {
+        onView(withId(R.id.start_button))
+            .perform(click());
+
+        onView(withId(R.id.timer))
+            .check(matches(isDisplayed()));
+        onView(withId(R.id.timer_status))
+            .check(matches(withText(mMainActivity.getString(R.string.status_working))));
+    }
+
 }

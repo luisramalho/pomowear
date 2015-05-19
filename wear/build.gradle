@@ -25,6 +25,7 @@ android {
     }
 }
 
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.android.support:wearable:1.1.0'
@@ -35,5 +36,8 @@ dependencies {
 
     // Testing-only dependencies
     androidTestCompile 'com.android.support.test:runner:0.2'
-//    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.1'
+
+    //Mockito
+    androidTestCompile 'org.mockito:mockito-core:1.10.19'
 }
