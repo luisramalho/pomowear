@@ -10,11 +10,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+    public static final String TAG = MainActivity.class.getSimpleName();
+
+    public static final long WORKING_TIME_MILLIS = 25*60*1000 + 1000; // extra second for UX
+    public static final long RESTING_TIME_MILLIS = 5*60*1000 + 1000; // extra second for UX
 
     private Button mStartButton;
     private TextView mTimer;
     private TextView mTimerStatus;
-    private Boolean mWorkingStatus;
+    private Boolean mIsWorkingStatus;
     private Vibrator mVibrator;
 
     @Override
@@ -40,7 +44,7 @@ public class MainActivity extends Activity {
                         mTimer.setVisibility(View.VISIBLE);
                         mTimerStatus.setVisibility(View.VISIBLE);
                         mTimer.setTextColor(getResources().getColor(android.R.color.darker_gray));
-                        mWorkingStatus = true;
+                        mIsWorkingStatus = true;
                         workTimer().start();
                     }
                 });
@@ -51,13 +55,13 @@ public class MainActivity extends Activity {
     private CountDownTimer workTimer() {
         mTimer.setTextColor(getResources().getColor(android.R.color.white));
         mTimerStatus.setText(getResources().getString(R.string.status_working));
-        return startTimer(25*60*1000+1000); // add an extra second for better UX
+        return startTimer(WORKING_TIME_MILLIS);
     }
 
     private CountDownTimer restTimer() {
         mTimer.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
         mTimerStatus.setText(getResources().getString(R.string.status_resting));
-        return startTimer(5*60*1000+1000); // add an extra second for better UX
+        return startTimer(RESTING_TIME_MILLIS);
     }
 
     private CountDownTimer startTimer(long millis) {
@@ -76,13 +80,13 @@ public class MainActivity extends Activity {
             public void onFinish() {
                 mVibrator.vibrate(500);
 
-                if (mWorkingStatus) {
-                    mWorkingStatus = false;
+                if (mIsWorkingStatus) {
                     restTimer().start();
                 } else {
-                    mWorkingStatus = true;
                     workTimer().start();
                 }
+
+                mIsWorkingStatus = !mIsWorkingStatus;
             }
         };
     }
