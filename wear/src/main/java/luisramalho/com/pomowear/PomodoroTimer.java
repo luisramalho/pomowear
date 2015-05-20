@@ -42,9 +42,14 @@ public class PomodoroTimer {
     public static final long LONG_BREAK_TIME_MILLIS = 15*60*1000;
 
     /**
+     * The Singleton instance of this class.
+     */
+    private static PomodoroTimer _instance;
+
+    /**
      * Callback so that activity knows what's going on.
      */
-    PomodoroCallback mPomodoroCallback;
+    private PomodoroListener mPomodoroListener;
 
     /**
      * If the pomodoro is in working status or not.
@@ -59,14 +64,22 @@ public class PomodoroTimer {
     /**
      * Constructor, instantiates the pomodoro callback, the working status boolean
      * and starts the working timer.
-     *
-     * @param pomodoroCallback Callback to keep activity informed.
      */
-    public PomodoroTimer(PomodoroCallback pomodoroCallback) {
-        mPomodoroCallback = pomodoroCallback;
+    public PomodoroTimer() {
         mIsWorkingStatus = true;
         mNumberOfPomodori = 0;
-        workingTimer().start();
+    }
+
+    /**
+     * Singleton, the most we will need is one timer.
+     *
+     * @return the only instance of PomodoroTimer.
+     */
+    public synchronized static PomodoroTimer getInstance() {
+        if (_instance == null) {
+            _instance = new PomodoroTimer();
+        }
+        return _instance;
     }
 
     /**
@@ -76,6 +89,7 @@ public class PomodoroTimer {
      */
     public CountDownTimer workingTimer() {
         mNumberOfPomodori++;
+        mPomodoroListener.workingTimeStarted();
         return startTimer(WORKING_TIME_MILLIS);
     }
 
@@ -85,6 +99,7 @@ public class PomodoroTimer {
      * @return timer with 5 minutes.
      */
     public CountDownTimer shortBreakTimer() {
+        mPomodoroListener.restingTimeStarted();
         return startTimer(SHORT_BREAK_TIME_MILLIS);
     }
 
@@ -94,6 +109,7 @@ public class PomodoroTimer {
      * @return timer with 15 minutes.
      */
     public CountDownTimer longBreakTimer() {
+        mPomodoroListener.restingTimeStarted();
         return startTimer(LONG_BREAK_TIME_MILLIS);
     }
 
@@ -109,8 +125,11 @@ public class PomodoroTimer {
 
             @Override
             public void onTick(long millisUntilFinished) {
+                if (_instance == null) {
+                    this.cancel(); // Stop timer if instance was destroyed
+                }
                 String timeLeft = millisToHourMinute(millisUntilFinished);
-                mPomodoroCallback.onTick(timeLeft);
+                mPomodoroListener.onTick(timeLeft);
             }
 
             @Override
@@ -122,16 +141,23 @@ public class PomodoroTimer {
                     } else {
                         shortBreakTimer().start();
                     }
-                    mPomodoroCallback.restingTimeStarted();
                 } else {
                     workingTimer().start();
-                    mPomodoroCallback.workingTimeStarted();
                 }
 
                 // Reverses the boolean value
                 mIsWorkingStatus = !mIsWorkingStatus;
             }
         };
+    }
+
+    /**
+     * Sets the pomodoro listener callback.
+     *
+     * @param callback the callback.
+     */
+    public void setPomodoroListener(PomodoroListener callback) {
+        mPomodoroListener = callback;
     }
 
     /**
@@ -146,5 +172,12 @@ public class PomodoroTimer {
         long minutes = (secondsUntilFinished % 3600) / 60;
         long seconds = secondsUntilFinished % 60;
         return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    /**
+     * Remove references to this instance, ie destroy it.
+     */
+    protected void destroy() {
+        _instance = null;
     }
 }

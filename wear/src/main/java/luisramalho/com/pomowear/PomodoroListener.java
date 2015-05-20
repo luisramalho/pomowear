@@ -16,7 +16,7 @@
 
 package luisramalho.com.pomowear;
 
-public interface PomodoroCallback {
+public interface PomodoroListener {
     void onTick(String timeLeft);
     void workingTimeStarted();
     void restingTimeStarted();
