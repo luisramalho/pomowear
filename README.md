@@ -1,7 +1,13 @@
 # Pomowear
-The [Pomodoro Technique](http://en.wikipedia.org/wiki/Pomodoro_Technique) is a time management method developed by Francesco Cirillo in the late 1980s. This app makes it easy to have the power of the technique always with you.
+The [Pomodoro Technique](http://en.wikipedia.org/wiki/Pomodoro_Technique) is a time management method developed by Francesco Cirillo in the late 1980s.
 
-![Pomowear](screenshots/device-2015-05-18-210032.png)
+The Pomowear app makes it easy to have the power of this technique always with you, it has the following timers:
+
+1. 25 minutes work;
+2. 5 minutes short break;
+3. 15 minutes long break (after 4 pomodori).
+
+![Pomowear Timer](screenshots/device-2015-05-18-210032.png)  ![Pomowear Details](screenshots/device-2015-05-20-125916.png)
 
 #License
 
